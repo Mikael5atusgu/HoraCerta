@@ -1,3 +1,100 @@
+Professor: Carlos David.
+Integrantes: Arthur Augusto de Souza, Alexsandro Oliveira Carvalho, Gabriel Carezolin Borges, Luis Fernando Ferreira Maracaipes Campos, Misael Augusto de Oliveira Gomes e Vitor Gabriel da Costa.
+HoraCerta --- Gestão Escolar e Calendário de Eventos
+
+Sistema web desenvolvido para centralizar informações escolares, organizar eventos do calendário e facilitar o gerenciamento de aulas, provas, atividades e substituições.
+Sobre o projeto
+
+O HoraCerta é uma aplicação web voltada para o ambiente escolar. A proposta é reduzir a desorganização causada por alterações de horários, aulas vagas e falta de comunicação sobre eventos acadêmicos.
+
+O sistema utiliza uma arquitetura full-stack, com frontend em HTML5, CSS3 e JavaScript Vanilla, backend em Node.js com Express e persistência em PostgreSQL ou SQLite.
+
+O projeto é dividido em três módulos principais:
+
+    M01 --- Interface Frontend
+    M02 --- Servidor API Backend
+    M03 --- Banco de Dados
+
+O escopo também contempla autenticação, calendário com filtros, gestão de eventos e fluxo de solicitação e aprovação de substituições de aulas.
+Objetivos
+
+    Centralizar informações acadêmicas em um único sistema.
+    Permitir a visualização de eventos escolares em um calendário.
+    Facilitar o cadastro e alteração de provas, trabalhos e aulas.
+    Permitir solicitações de preenchimento de aulas vagas.
+    Permitir que gestores aprovem ou recusem solicitações de substituição.
+    Melhorar a comunicação sobre alterações de horários.
+    Utilizar controle de acesso baseado em papéis (RBAC).
+
+Perfis de usuário
+
+O sistema possui quatro perfis principais:
+
+Perfil Principais funções
+
+Aluno Visualizar calendário e enviar feedbacks ou relatos de problemas.
+
+Professor Visualizar eventos, cadastrar/alterar eventos de suas turmas e solicitar substituição de aulas vagas.
+
+Gestor Gerenciar eventos, aprovar ou recusar substituições e realizar bloqueios institucionais de horários.
+Administrador Possui acesso administrativo completo, incluindo gerenciamento, auditoria e configurações da plataforma.
+
+Também existem serviços auxiliares, como o Banco de Dados e o Serviço Notificador, responsável por alertas e notificações.
+Principais funcionalidades
+Autenticação
+
+    Login de usuários.
+    Controle de acesso por perfil.
+    Autenticação utilizando JWT.
+    Proteção das rotas conforme as permissões do usuário.
+
+Calendário
+
+    Visualização dos eventos escolares.
+    Alternância entre visualização mensal e semanal.
+    Filtros por categoria.
+    Categorias como:
+    Aula
+    Prova/Trabalho
+    Feriado
+    Evento Escolar
+
+Gerenciamento de eventos
+
+Professores, gestores e administradores podem cadastrar eventos acadêmicos, informando:
+
+    Título
+    Disciplina
+    Turma
+    Tipo de evento
+    Data
+    Horário
+
+Substituição de aulas vagas
+
+O sistema permite:
+
+    Identificar uma aula marcada como vaga.
+    Professor solicitar o preenchimento.
+    Gestor analisar a solicitação.
+    Aprovar ou recusar a substituição.
+    Atualizar o calendário após a decisão.
+    Notificar os usuários afetados.
+
+Bloqueio institucional
+
+Gestores e administradores podem registrar bloqueios de horários relacionados a atividades institucionais, como eventos em espaços da escola.
+Feedback
+
+Alunos podem enviar:
+
+    Sugestões.
+    Relatos de problemas relacionados aos horários.
+
+Exclusão segura
+
+Eventos que exigem exclusão administrativa possuem confirmação em duas etapas antes da remoção definitiva.
+Arquitetura
 # HoraCerta
 
 Calendário escolar responsivo com login por perfil, temas claro/escuro e gestão de eventos, aulas vagas e avisos. A interface segue a referência visual enviada; a API aplica as permissões no servidor e persiste os dados em SQLite.
