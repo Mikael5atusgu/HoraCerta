@@ -1,0 +1,24 @@
+{
+  "name": "horacerta",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Calendario escolar e gestao de horarios HoraCerta",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test test/api.test.js"
+  },
+  "engines": {
+    "node": ">=20.17"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "sqlite3": "^6.0.1"
+  }
+}

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#111827">
+    <meta name="description" content="HoraCerta: calendario escolar e gestao de horarios.">
+    <title>HoraCerta — Calendário escolar</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/i18n.js" defer></script>
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main id="login-screen" class="login-screen">
+      <div class="language-control login-language">
+        <button class="icon-button language-toggle" type="button" aria-label="Idioma: português" aria-haspopup="true" aria-expanded="false">
+          <span class="language-current-flag" aria-hidden="true"></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+        </button>
+        <div class="language-menu" role="group" aria-label="Selecionar idioma" hidden>
+          <button type="button" data-language="pt" hidden><span data-language-flag aria-hidden="true"></span> Português</button>
+          <button type="button" data-language="es"><span data-language-flag aria-hidden="true"></span> Español</button>
+          <button type="button" data-language="en"><span data-language-flag aria-hidden="true"></span> English</button>
+        </div>
+      </div>
+      <form id="login-form" class="login-card">
+        <a class="brand login-brand" href="/" aria-label="HoraCerta início">
+          <span class="brand-mark" aria-hidden="true">H</span>
+          HoraCerta
+        </a>
+        <h1>Acessar sistema</h1>
+        <p class="login-intro">Entre para consultar a rotina da sua escola.</p>
+
+        <label for="login-email">E-mail</label>
+        <input id="login-email" name="email" type="email" autocomplete="username" placeholder="seu.email@escola.com" required>
+
+        <label for="login-password">Senha</label>
+        <div class="password-field">
+          <input id="login-password" name="senha" type="password" autocomplete="current-password" placeholder="Sua senha" required>
+          <button id="toggle-password" class="password-toggle" type="button" aria-label="Mostrar senha">Mostrar</button>
+        </div>
+
+        <label for="login-role">Perfil</label>
+        <select id="login-role" name="papel" required>
+          <option value="aluno">Aluno</option>
+          <option value="professor">Professor</option>
+          <option value="gestor">Coordenador</option>
+          <option value="admin">Administrador</option>
+        </select>
+
+        <p id="login-error" class="form-error" role="alert" hidden></p>
+        <button class="button button-primary login-submit" type="submit">Entrar no sistema</button>
+        <details class="demo-access">
+          <summary>Acesso de demonstração</summary>
+          <p>Senha de teste: <code>HoraCerta2026!</code></p>
+          <button type="button" class="demo-user" data-email="aluno.joao@escola.edu.br" data-role="aluno">Aluno</button>
+          <button type="button" class="demo-user" data-email="professor.carlos@escola.edu.br" data-role="professor">Professor</button>
+          <button type="button" class="demo-user" data-email="gestor@escola.edu.br" data-role="gestor">Coordenação</button>
+          <button type="button" class="demo-user" data-email="admin@escola.edu.br" data-role="admin">Admin</button>
+        </details>
+      </form>
+      <button id="login-theme" class="theme-button login-theme" type="button" aria-label="Alternar tema"></button>
+    </main>
+
+    <div id="app-screen" class="app-shell" hidden>
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <a class="brand" href="#" aria-label="HoraCerta">
+            <span class="brand-mark" aria-hidden="true">H</span>
+            HoraCerta
+          </a>
+          <span id="role-badge" class="role-badge"></span>
+        </div>
+        <div class="sidebar-scroll">
+          <section class="sidebar-section">
+            <h2>Ações rápidas</h2>
+            <nav id="quick-actions" class="quick-actions" aria-label="Ações do perfil"></nav>
+          </section>
+          <section class="sidebar-section category-section">
+            <h2>Categorias</h2>
+            <div class="category-list">
+              <label class="category-option"><input type="checkbox" value="aula" checked><span class="category-dot dot-aula"></span>Aulas</label>
+              <label class="category-option"><input type="checkbox" value="provas" checked><span class="category-dot dot-prova"></span>Provas e trabalhos</label>
+              <label class="category-option"><input type="checkbox" value="feriado" checked><span class="category-dot dot-feriado"></span>Feriados</label>
+              <label class="category-option"><input type="checkbox" value="atividade" checked><span class="category-dot dot-atividade"></span>Eventos escolares</label>
+            </div>
+          </section>
+          <section id="sidebar-notices" class="sidebar-section notice-section">
+            <h2>Últimos avisos</h2>
+            <div id="notice-list" class="notice-list"></div>
+          </section>
+        </div>
+        <div class="sidebar-user">
+          <span id="avatar" class="avatar"></span>
+          <span class="user-summary"><strong id="user-name" data-user-content></strong><small id="user-email" data-user-content></small></span>
+          <button id="logout-button" class="icon-button logout-button" type="button" title="Sair" aria-label="Sair">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3m9-8h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/></svg>
+          </button>
+        </div>
+      </aside>
+
+      <section class="main-panel">
+        <header class="topbar">
+          <div class="topbar-title">
+            <p class="eyebrow">Agenda escolar</p>
+            <h1 id="calendar-title"></h1>
+          </div>
+          <div class="topbar-controls">
+            <div class="view-switch" role="group" aria-label="Visualização do calendário">
+              <button id="month-view" class="view-button is-active" type="button" aria-pressed="true">Mês</button>
+              <button id="week-view" class="view-button" type="button" aria-pressed="false">Semana</button>
+            </div>
+            <button id="today-button" class="button button-quiet" type="button">Hoje</button>
+            <div class="language-control app-language">
+              <button class="icon-button language-toggle" type="button" aria-label="Idioma: português" aria-haspopup="true" aria-expanded="false">
+                <span class="language-current-flag" aria-hidden="true"></span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+              </button>
+              <div class="language-menu" role="group" aria-label="Selecionar idioma" hidden>
+                <button type="button" data-language="pt" hidden><span data-language-flag aria-hidden="true"></span> Português</button>
+                <button type="button" data-language="es"><span data-language-flag aria-hidden="true"></span> Español</button>
+                <button type="button" data-language="en"><span data-language-flag aria-hidden="true"></span> English</button>
+              </div>
+            </div>
+            <button id="theme-button" class="icon-button theme-button" type="button" aria-label="Alternar tema"></button>
+          </div>
+        </header>
+
+        <main class="calendar-content">
+          <div id="announcement-banner" class="announcement-banner" hidden>
+            <span class="announcement-icon" aria-hidden="true">!</span>
+            <div><strong id="announcement-title" data-user-content></strong><p id="announcement-message" data-user-content></p></div>
+            <button id="dismiss-announcement" class="icon-button" type="button" aria-label="Dispensar aviso">×</button>
+          </div>
+          <div class="calendar-toolbar">
+            <div class="calendar-nav">
+              <button id="previous-period" class="icon-button" type="button" aria-label="Período anterior">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <button id="next-period" class="icon-button" type="button" aria-label="Próximo período">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+            <span id="calendar-subtitle" class="calendar-subtitle"></span>
+          </div>
+          <div id="calendar-grid" class="calendar-grid" aria-label="Calendário"></div>
+          <div class="calendar-legend">
+            <span><i class="category-dot dot-aula"></i>Aula</span>
+            <span><i class="category-dot dot-prova"></i>Prova / trabalho</span>
+            <span><i class="category-dot dot-feriado"></i>Feriado</span>
+            <span><i class="category-dot dot-atividade"></i>Evento escolar</span>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <dialog id="app-dialog" class="app-dialog" aria-labelledby="dialog-title">
+      <div id="dialog-content"></div>
+    </dialog>
+    <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  </body>
+</html>
