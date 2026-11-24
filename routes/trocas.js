@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { randomUUID } = require('node:crypto');
-const { all, get, withTransaction } = require('../database');
+const { all, get, isConstraintError, withTransaction } = require('../database');
 const { allowRoles, authenticateToken } = require('../middlewares/auth');
 
 const router = Router();
@@ -39,7 +39,7 @@ router.post('/', authenticateToken, allowRoles('professor'), async (req, res, ne
     });
     return res.status(201).json({ status: 'success', message: 'Solicitacao enviada para a coordenacao.' });
   } catch (error) {
-    if (error.code === 'SQLITE_CONSTRAINT') return res.status(409).json({ status: 'error', error: 'Esta solicitacao ja foi enviada.' });
+    if (isConstraintError(error)) return res.status(409).json({ status: 'error', error: 'Esta solicitacao ja foi enviada.' });
     next(error);
   }
 });

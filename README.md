@@ -4,7 +4,7 @@ Calendário escolar responsivo com login por perfil, temas claro/escuro e gestã
 
 ## Executar localmente
 
-Requisitos: Node.js 20.17 ou superior.
+Requisitos: Node.js 22 ou superior.
 
 ```powershell
 npm install
@@ -66,9 +66,9 @@ Exemplos para próximas alterações: `fix: corrigir filtro semanal`, `docs: atu
 
 ## Publicar pelo GitHub
 
-O repositório inclui uma verificação automatizada em `.github/workflows/ci.yml`. Faça push para o GitHub e o workflow executará `npm ci` e `npm test`.
+O repositório inclui uma verificação automatizada em `.github/workflows/ci.yml`. Faça push para o GitHub e o workflow executará `npm ci`, compilará o `better-sqlite3` a partir do código-fonte e executará `npm test`.
 
-GitHub Pages hospeda somente arquivos estáticos e não executa Express nem mantém SQLite. Para publicar a aplicação completa, conecte o repositório a um host Node.js. O arquivo `render.yaml` configura um serviço Render com disco persistente para o SQLite; ao criar o serviço, informe `BOOTSTRAP_ADMIN_EMAIL` e `BOOTSTRAP_ADMIN_PASSWORD` como variáveis secretas. A aplicação usa o valor gerado para `JWT_SECRET`.
+GitHub Pages hospeda somente arquivos estáticos e não executa Express nem mantém SQLite. Para publicar a aplicação completa, conecte o repositório a um host Node.js. O arquivo `render.yaml` configura um serviço Render com disco persistente para o SQLite e compila o `better-sqlite3` no próprio ambiente Linux do Render, evitando incompatibilidades de GLIBC. Ao criar o serviço, informe `BOOTSTRAP_ADMIN_EMAIL` e `BOOTSTRAP_ADMIN_PASSWORD` como variáveis secretas. A aplicação usa o valor gerado para `JWT_SECRET`.
 
 ## Dados
 

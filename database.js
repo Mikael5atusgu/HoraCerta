@@ -1,51 +1,60 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { randomUUID } = require('node:crypto');
-const sqlite3 = require('sqlite3').verbose();
+const Database = require('better-sqlite3');
 const bcrypt = require('bcryptjs');
 
 const databaseFile = path.resolve(process.env.DATABASE_FILE || './data/horacerta.sqlite');
 fs.mkdirSync(path.dirname(databaseFile), { recursive: true });
 
-const db = new sqlite3.Database(databaseFile);
+const db = new Database(databaseFile);
 let transactionQueue = Promise.resolve();
 
-function run(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function onRun(error) {
-      if (error) return reject(error);
-      resolve({ id: this.lastID, changes: this.changes });
-    });
-  });
+function runSync(sql, params = []) {
+  const result = db.prepare(sql).run(...params);
+  return { id: Number(result.lastInsertRowid), changes: result.changes };
 }
 
-function get(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (error, row) => {
-      if (error) return reject(error);
-      resolve(row);
-    });
-  });
+function getSync(sql, params = []) {
+  return db.prepare(sql).get(...params);
 }
 
-function all(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (error, rows) => {
-      if (error) return reject(error);
-      resolve(rows);
-    });
-  });
+function allSync(sql, params = []) {
+  return db.prepare(sql).all(...params);
+}
+
+function isConstraintError(error) {
+  return typeof error?.code === 'string' && error.code.startsWith('SQLITE_CONSTRAINT');
+}
+
+async function run(sql, params = []) {
+  await transactionQueue;
+  return runSync(sql, params);
+}
+
+async function get(sql, params = []) {
+  await transactionQueue;
+  return getSync(sql, params);
+}
+
+async function all(sql, params = []) {
+  await transactionQueue;
+  return allSync(sql, params);
 }
 
 function withTransaction(callback) {
   const transaction = transactionQueue.then(async () => {
-    await run('BEGIN IMMEDIATE');
+    db.exec('BEGIN IMMEDIATE');
     try {
-      const result = await callback({ run, get, all });
-      await run('COMMIT');
+      const result = await callback({
+        run: async (sql, params = []) => runSync(sql, params),
+        get: async (sql, params = []) => getSync(sql, params),
+        all: async (sql, params = []) => allSync(sql, params)
+      });
+      db.exec('COMMIT');
       return result;
     } catch (error) {
-      await run('ROLLBACK');
+      db.exec('ROLLBACK');
       throw error;
     }
   });
@@ -118,16 +127,18 @@ async function seedDemoData() {
 
 async function initializeDatabase() {
   const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
-  await new Promise((resolve, reject) => {
-    db.exec(schema, (error) => error ? reject(error) : resolve());
-  });
+  db.exec(schema);
   await seedDemoData();
 }
 
 module.exports = {
   all,
-  close: () => new Promise((resolve, reject) => db.close((error) => error ? reject(error) : resolve())),
+  close: async () => {
+    await transactionQueue;
+    db.close();
+  },
   get,
+  isConstraintError,
   initializeDatabase,
   run,
   withTransaction

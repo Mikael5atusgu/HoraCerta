@@ -3,7 +3,7 @@ services:
     name: horacerta
     runtime: node
     plan: starter
-    buildCommand: npm ci
+    buildCommand: npm ci --include=dev && npm run build:native && npm prune --omit=dev
     startCommand: npm start
     healthCheckPath: /api/health
     disk:

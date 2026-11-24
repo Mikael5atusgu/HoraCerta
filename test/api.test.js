@@ -172,6 +172,17 @@ test('login, autorizacao por perfil, eventos, feedback e aprovacao de troca', as
     })
   });
   assert.equal(newUser.status, 201);
+  const duplicateUser = await request('/api/v1/admin/usuarios', {
+    method: 'POST',
+    token: adminToken,
+    body: JSON.stringify({
+      nome: 'Outro Nome',
+      email: 'novo.professor@escola.edu.br',
+      senha: 'SenhaDeTeste2026',
+      papel: 'professor'
+    })
+  });
+  assert.equal(duplicateUser.status, 409);
   const users = await request('/api/v1/admin/usuarios', { token: adminToken });
   assert.equal(users.status, 200);
   assert.equal(users.body.data.length, 6);

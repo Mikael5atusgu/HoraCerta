@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { randomUUID } = require('node:crypto');
 const bcrypt = require('bcryptjs');
-const { all, withTransaction } = require('../database');
+const { all, isConstraintError, withTransaction } = require('../database');
 const { allowRoles, authenticateToken } = require('../middlewares/auth');
 
 const router = Router();
@@ -47,7 +47,7 @@ router.post('/usuarios', async (req, res, next) => {
     });
     return res.status(201).json({ status: 'success', message: 'Usuario cadastrado.' });
   } catch (error) {
-    if (error.code === 'SQLITE_CONSTRAINT') return res.status(409).json({ status: 'error', error: 'Este e-mail ja esta cadastrado.' });
+    if (isConstraintError(error)) return res.status(409).json({ status: 'error', error: 'Este e-mail ja esta cadastrado.' });
     next(error);
   }
 });
