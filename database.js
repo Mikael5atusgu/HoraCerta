@@ -94,6 +94,8 @@ async function seedDemoData() {
     );
   }
 
+  if (process.env.NODE_ENV === 'production') return;
+
   const teacher = await get("SELECT id FROM perfis WHERE papel = 'professor' ORDER BY email LIMIT 1");
   const today = new Date();
   const year = today.getFullYear();
